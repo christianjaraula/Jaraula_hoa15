@@ -1,0 +1,50 @@
+---
+- hosts: ubuntuserver1
+  become: true
+  tasks:
+ 
+  - name: install updates ubuntu
+    apt: 
+      upgrade: dist
+      update_cache: yes
+    changed_when: false
+#############NEUTRON################
+  - name: install neutron
+    apt:
+      name: neutron-linuxbridge-agent
+      state: present
+      update_cache: yes
+ 
+  - name: restart neutron
+    service:
+       name: neutron-linuxbridge-agent
+       state: restarted
+       enabled: yes
+###################HORIZON##############
+  - name: install horizon
+    apt: 
+      name: 
+        - openstack-dashboard
+      state: present
+      update_cache: yes
+  - name: install apache2
+    apt:
+      name: apache2
+      state: present
+      update_cache: yes
+
+  - name: reload the apache2
+    shell: sudo systemctl reload apache2.service
+##################CINDER####################
+  - name: install cinder
+    apt:
+      name:
+        - cinder-api
+        - cinder-backup
+      state: present
+      update_cache: yes
+
+  - name: start cinder
+    service:
+       name: cinder-backup
+       state: restarted
